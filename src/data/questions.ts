@@ -80,8 +80,41 @@ const partBData = [
   { p: ["Easily offended", "not", "I am"], a: "I am not easily offended." }
 ];
 
+const partFData = [
+  "Thirty years of working as a salesperson, James decided to retire. His first few weeks were spent in relaxation and reading. After a month he got so bored, so he volunteered in an animal rescue centre. He loved working with animals and had a scheduled work every day.",
+  "Thank you for choosing us as your learning partner. The certification program that you have chosen is uniquely crafted for full-time employees, who cannot attend classes during their work schedule. The timings of the sessions are fixed in such a way, that no one misses out a single class. We offer night and weekend sessions to learn from your comfort zone. During this program you will get opportunities to meet qualified professionals and experts in the industry. Please feel free to contact me for any queries.",
+  "Mary won the Best teacher award for this year. She is well known for her unique and creative style of teaching. Along with the award she got a trip to Paris for a week. Mary and her husband have never been to Paris, so they are very excited for the trip.",
+  "Robert went to a restaurant for having dinner. When the waiter brought the bill, he reached for his wallet. But it was not there. Still, he remembered having it earlier. Finally, the waiter found it under the table.",
+  "Kevin left home early to visit the dentist. So, he decided to take the subway. He did not know that the subway was under maintenance. He ran back home to take his bicycle. Eventually, he made it on time for the appointment.",
+  "Cindy and Claire bought tickets for the play that is going to be held next weekend. But Claire’s brother fell from the bike and broke his arm. He was admitted in the hospital. To cheer him up, Claire gave him her ticket. So that Cindy and Claire’s brother would go to the play together.",
+  "Sophia sent an email to all the employees about the new cafeteria, which will be opened on Monday of the following week. To get suggestions from employee she has sent the email. One of the employees suggested to include more vegetarian option in the menu. She thought it was a good idea and planned to implement it.",
+  "Sorry about the pay rate confusion. Our budget had been cut off. So, our offer has been limited. More doubts could be cleared directly if you could come back.",
+  "James and Ann were driving to the airport. Ann asked James it he had remembered to take his passport. He realized that he had forgotten it. He had left it in his jacket pocket at home. They turned around to pick it up, they arrived at the airport just in time to catch their flight.",
+  "I received a couple of good articles about how to be productive every day at work. I think you will find them useful. These were forwarded by our New York branch. Click on the link below to view the articles. You might learn something new.",
+  "I was at the International Trade Fair in Rome last week, and it was very exciting. Rome is a beautiful city. There were people from all over the world at the fair. I met a sales manager whose company sells software and it sounded like there might be a business opportunity. I will stay in touch with him as a business contact. I am writing a report of the trip right now and I should be able to send it out by noon today.",
+  "Maria and her brother went to the airport. When she was asked for her passport, Maria reached for her purse, but it was not there. She remembered having her passport when she came into the airport. Her brother looked around and found the wallet under his bag.",
+  "Laura and her husband 2 tickets to go on a trip to Trinidad and Tobago. She asked her father in law to water the plants while they were away. Her father in law forgot to water the plants because he had too much work. When Laura and her husband came back from the trip, they found all the plants in a bad condition.",
+  "John heard that the pizza place near his flat was hiring new bike couriers. He loves to bike, and he also loves pizza, so he decided to apply for the job. When he went to the restaurant for a job interview, he got very nervous and hesitated a lot during the interview. Fortunately, the restaurant manager decided to hire him thanks to his great biking skill.",
+  "David worked for a bank for three year. He enjoyed his job, but he wanted to have more career options. He decided to go to the business school. After getting his degree he became a manager at the same bank.",
+  "My name is Amy Jones, and I am the new marketing manager. This memo is just to let you know that I will be holding a staff meeting Friday at 9:00 am so that I can introduce myself properly. I look forward to meeting you then.",
+  "A man worked in a factory that produced the music boxes, on Saturday’s, he would take his little girl to the factory. All the people who worked on the assembly line would talk to the little girl and she loved the attention. At the end of the day, they would always give her a small music box.",
+  "Employees who wish to take time off during the summer should check with their managers in advance. Many people plan to be away from the office during the summer. As a company, we'd like to make sure all projects have enough people working on them before we approve requests for time off.",
+  "Sam was on a busy flight that has been delayed. The plane finally landed and arrived at the gate. Then all the passengers got up to get their luggage. The woman in front of Sam accidentally bumped him in the arm. Just as she was apologizing, her bag fell from the overhead compartment and hit him on the head. The woman felt awful. Sam decided he didn't want to fly again any time soon.",
+  "John is the sales manager of a small store. An angry customer called him to complain about a home security system that she had recently bought from his store. She told him that it did not work properly because the alarm went off when she was in the house. Initially she demanded a refund, but when John apologized and offered to replace her system with a new one, she agreed.",
+  "This is our annual remainder to all the employees. Our hospital is known in our community for excellent customer care. We have been providing friendly and quality services to all our patients and are committed to doing the same again this year. Greet your patients with a smile and hospitality.",
+  "David has an exam tomorrow. So, he stayed up late studying. In the morning, his alarm went off, but David knocked the alarm to the floor and it broke. Then, David fell asleep again. When he woke up, he had slept well, but he had missed the exam.",
+  "Paul wakes up early everyday so that he can be at work on time. He sets his alarm for the same time every morning. One day Paul’s alarm didn’t go off and he didn’t wake up until noon. He arrived to work very late and missed a meeting.",
+  "Kate volunteers at a school. She helps teachers by reading to students and helping them with their homework. She enjoys her time at the school so much that she has decided to become a teacher. All of the teachers that she works with have told her that it would be a wonderful job for her.",
+  "Thanks, so much for dinner last night. We had a really good time. We were especially glad to be able to meet your little daughter. I hope you will be able to come to visit us soon. Let us stay in touch",
+  "George works in the film industry in Los Angeles. He once thought he would be able to meet famous actors and producers every day. But his job is to edit films, so he is always inside the editing room. He never gets to see the actors in person.",
+  "John bought a new phone and was looking forward to trying it out as soon as possible. The moment John got home, he tried to turn it on, but it did not work. He immediately drove back to the store. The salesperson was very nice and showed john how to insert the battery. John was pleased that the phone was working properly, but at the same time, he felt embarrassed because he should have read the instructions.",
+  "Corey is a taxi driver. It is his dream job because he loves driving cars. He started the job ten years ago and has been saving up money since then. Soon, he will use this money to start his own Taxi company.",
+  "Thank you so much for being so understanding about our delay of shipment. It has been quite difficult to get materials from our suppliers dur to the recent whether conditions. It is an unusual circumstance. In any case, we should be able to ship the products to you tomorrow. In the meantime, if you have any questions, please feel free to contact me."
+];
+
 // Fisher-Yates shuffle directly to randomly select 8 items
 const shuffledPartB = [...partBData].sort(() => 0.5 - Math.random()).slice(0, 8);
+const shuffledPartF = [...partFData].sort(() => 0.5 - Math.random()).slice(0, 2);
 
 export const questions: Question[] = [
   ...Array.from({ length: 16 }).map((_, i) => ({
@@ -183,20 +216,14 @@ export const questions: Question[] = [
     marks: 1,
     tip: 'Pay attention to exact words, plural forms, and punctuation.'
   })),
-  ...Array.from({ length: 2 }).map((_, i) => ({
+  ...shuffledPartF.map((item, i) => ({
     id: `F${i + 1}`,
     section: 'F' as const,
     sectionName: 'Part F: Passage Reconstruction',
     instruction: 'Read the paragraph. It will disappear after 30 seconds. Then rewrite it from memory.',
-    prompt: [
-      'Yesterday, Sarah went to the grocery store to buy ingredients for a cake. She bought flour, sugar, and eggs. However, she forgot to buy milk, so she had to borrow some from her neighbor. The cake turned out delicious and everyone enjoyed it at the party.',
-      'The company announced its new product line during the annual conference. They expect a twenty percent increase in sales over the next quarter. The CEO emphasized the importance of innovation and teamwork to achieve these ambitious goals.'
-    ][i],
+    prompt: item,
     type: 'reconstruction' as const,
-    correctAnswer: [
-      'Yesterday, Sarah went to the grocery store to buy ingredients for a cake. She bought flour, sugar, and eggs. However, she forgot to buy milk, so she had to borrow some from her neighbor. The cake turned out delicious and everyone enjoyed it at the party.',
-      'The company announced its new product line during the annual conference. They expect a twenty percent increase in sales over the next quarter. The CEO emphasized the importance of innovation and teamwork to achieve these ambitious goals.'
-    ][i],
+    correctAnswer: item,
     marks: 6,
     timeLimit: 30, // 30 seconds to read
     tip: 'Focus on remembering the key characters, actions, and sequence of events. Do not worry about word-for-word accuracy.'
