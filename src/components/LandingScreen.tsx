@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from './ui/Button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/Card';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/Card';
 import { SectionType } from '../types';
 import { Timer, Target, ListTodo, Headphones, MessageSquare, Type, PenTool, BookOpen, Mic2, PlayCircle, CheckCircle2, AlertCircle } from 'lucide-react';
 
