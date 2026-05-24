@@ -1,0 +1,6 @@
+{
+  "name": "Versant Practice Test",
+  "description": "A clean, mobile-friendly mock Versant-style speaking and listening test simulator.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
