@@ -27,7 +27,7 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({ question, on
     case 'dictation':
       return <DictationQuestion question={question} onAnswer={onAnswer} initialAnswer={initialAnswer} onAutoNext={onAutoNext} />;
     case 'reconstruction':
-      return <ReconstructionQuestion question={question} onAnswer={onAnswer} initialAnswer={initialAnswer} />;
+      return <ReconstructionQuestion question={question} onAnswer={onAnswer} initialAnswer={initialAnswer} onAutoNext={onAutoNext} />;
     default:
       return <div>Unknown question type</div>;
   }

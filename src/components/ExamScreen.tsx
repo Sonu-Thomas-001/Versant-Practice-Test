@@ -55,7 +55,7 @@ export function ExamScreen({ questions, onComplete }: ExamScreenProps) {
 
   const handleContinueSection = () => {
     setShowSectionTransition(false);
-    setCurrentIdx(currentIdx + 1);
+    setCurrentIdx(prev => prev + 1);
   };
 
   const handlePrevious = () => {
@@ -96,10 +96,7 @@ export function ExamScreen({ questions, onComplete }: ExamScreenProps) {
           <h3 className="text-2xl font-bold text-gray-900 mb-2">Part {currentQuestion.section} is complete.</h3>
           <p className="text-gray-600 mb-8 text-lg">Do you want to continue to {nextQ.sectionName.split(':')[0]}: {nextQ.sectionName.split(':')[1]}?</p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Button variant="outline" className="w-full sm:w-auto" onClick={() => setShowSectionTransition(false)}>
-              Review Later
-            </Button>
-            <Button className="w-full sm:w-auto shadow-md" onClick={handleContinueSection}>
+            <Button className="w-full sm:w-auto shadow-md px-8 py-3 text-lg" onClick={handleContinueSection}>
               Start {nextQ.sectionName.split(':')[0]}
             </Button>
           </div>
@@ -167,7 +164,7 @@ export function ExamScreen({ questions, onComplete }: ExamScreenProps) {
         {/* Navigation */}
         <div className="flex justify-between pt-4 mt-8 bg-white border-t border-gray-100 py-4 px-2 flex-wrap gap-2">
            <div className="w-full sm:w-auto">
-             {currentQuestion.type !== 'repeat' && currentQuestion.type !== 'build' && currentQuestion.type !== 'conversation' && currentQuestion.type !== 'completion' && currentQuestion.type !== 'dictation' && (
+             {currentQuestion.type !== 'repeat' && currentQuestion.type !== 'build' && currentQuestion.type !== 'conversation' && currentQuestion.type !== 'completion' && currentQuestion.type !== 'dictation' && currentQuestion.type !== 'reconstruction' && (
                <Button variant="outline" onClick={handlePrevious} disabled={currentIdx === 0} className="w-full sm:w-auto text-gray-500 hover:text-gray-700">
                  Previous
                </Button>
@@ -178,7 +175,7 @@ export function ExamScreen({ questions, onComplete }: ExamScreenProps) {
              <Button variant="outline" onClick={handleSkipSection} className="w-full sm:w-auto text-orange-600 hover:text-orange-700 hover:bg-orange-50 border-orange-200">
                Skip Section
              </Button>
-             {currentQuestion.type !== 'repeat' && currentQuestion.type !== 'build' && currentQuestion.type !== 'conversation' && currentQuestion.type !== 'completion' && currentQuestion.type !== 'dictation' && (
+             {currentQuestion.type !== 'repeat' && currentQuestion.type !== 'build' && currentQuestion.type !== 'conversation' && currentQuestion.type !== 'completion' && currentQuestion.type !== 'dictation' && currentQuestion.type !== 'reconstruction' && (
                <Button onClick={handleNext} className="w-full sm:w-auto shadow-md">
                  {currentIdx === questions.length - 1 ? 'Finish Test' : 'Next'}
                </Button>
