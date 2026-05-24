@@ -2,6 +2,7 @@ import React from 'react';
 import { Question } from '../../types';
 import { RepeatQuestion } from './RepeatQuestion';
 import { BuildQuestion } from './BuildQuestion';
+import { ConversationQuestion } from './ConversationQuestion';
 import { CompletionQuestion } from './CompletionQuestion';
 import { DictationQuestion } from './DictationQuestion';
 import { ReconstructionQuestion } from './ReconstructionQuestion';
@@ -19,6 +20,8 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({ question, on
       return <RepeatQuestion question={question} onAnswer={onAnswer} initialAnswer={initialAnswer} onAutoNext={onAutoNext} />;
     case 'build':
       return <BuildQuestion question={question} onAnswer={onAnswer} initialAnswer={initialAnswer} onAutoNext={onAutoNext} />;
+    case 'conversation':
+      return <ConversationQuestion question={question} onAnswer={onAnswer} initialAnswer={initialAnswer} onAutoNext={onAutoNext} />;
     case 'completion':
       return <CompletionQuestion question={question} onAnswer={onAnswer} initialAnswer={initialAnswer} onAutoNext={onAutoNext} />;
     case 'dictation':

@@ -69,6 +69,7 @@ export function evaluateAnswer(question: Question, userAnswer: string): number {
 
     case 'build':
     case 'completion':
+    case 'conversation':
       // Almost exact match required
       if (similarityScore > 0.9) return maxMarks;
       return 0;

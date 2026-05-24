@@ -12,7 +12,7 @@ export default function App() {
   const [examState, setExamState] = useState<'landing' | 'countdown' | 'exam' | 'result'>('landing');
   const [result, setResult] = useState<ExamResult | null>(null);
 
-  const [selectedSections, setSelectedSections] = useState<SectionType[]>(['A', 'B', 'D', 'E', 'F']);
+  const [selectedSections, setSelectedSections] = useState<SectionType[]>(['A', 'B', 'C', 'D', 'E', 'F']);
   const [activeQuestions, setActiveQuestions] = useState(questions);
 
   const handleStart = (sections: SectionType[]) => {
@@ -30,6 +30,7 @@ export default function App() {
     const sections: Record<SectionType, any> = {
       A: { score: 0, maxScore: 0, feedback: '' },
       B: { score: 0, maxScore: 0, feedback: '' },
+      C: { score: 0, maxScore: 0, feedback: '' },
       D: { score: 0, maxScore: 0, feedback: '' },
       E: { score: 0, maxScore: 0, feedback: '' },
       F: { score: 0, maxScore: 0, feedback: '' },

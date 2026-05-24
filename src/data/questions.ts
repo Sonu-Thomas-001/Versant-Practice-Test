@@ -1,4 +1,5 @@
 import { Question } from '../types';
+import { partCData } from './partCData';
 import { partDData } from './partDData';
 import { partEData } from './partEData';
 import { partFData } from './partFData';
@@ -239,9 +240,10 @@ const partAData = [
   "As a matter of policy representatives may not their names to the customers."
 ];
 
-// Fisher-Yates shuffle directly to randomly select 8 items
+// Fisher-Yates shuffle directly to randomly select items
 const shuffledPartA = [...partAData].sort(() => 0.5 - Math.random()).slice(0, 16);
 const shuffledPartB = [...partBData].sort(() => 0.5 - Math.random()).slice(0, 8);
+const shuffledPartC = [...partCData].sort(() => 0.5 - Math.random()).slice(0, 12);
 const shuffledPartD = [...partDData].sort(() => 0.5 - Math.random()).slice(0, 18);
 const shuffledPartE = [...partEData].sort(() => 0.5 - Math.random()).slice(0, 14);
 const shuffledPartF = [...partFData].sort(() => 0.5 - Math.random()).slice(0, 2);
@@ -272,6 +274,18 @@ export const questions: Question[] = [
       tip: 'Pay attention to grammar and logical sentence order.'
     };
   }),
+  ...shuffledPartC.map((item, i) => ({
+    id: `C${i + 1}`,
+    section: 'C' as const,
+    sectionName: 'Part C: Conversations',
+    instruction: 'Listen to the conversation and answer the question.',
+    prompt: item.prompt,
+    type: 'conversation' as const,
+    options: item.options,
+    correctAnswer: item.correctAnswer,
+    marks: 1,
+    tip: 'Listen carefully for key details mentioned in the conversation.'
+  })),
   ...shuffledPartD.map((item, i) => ({
     id: `D${i + 1}`,
     section: 'D' as const,

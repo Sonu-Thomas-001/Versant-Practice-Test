@@ -10,11 +10,12 @@ interface LandingScreenProps {
 
 export function LandingScreen({ onStart }: LandingScreenProps) {
   const [showModal, setShowModal] = useState(false);
-  const [selectedSections, setSelectedSections] = useState<SectionType[]>(['A', 'B', 'D', 'E', 'F']);
+  const [selectedSections, setSelectedSections] = useState<SectionType[]>(['A', 'B', 'C', 'D', 'E', 'F']);
 
   const allSections: { id: SectionType; label: string; icon: React.ReactNode; desc: string }[] = [
     { id: 'A', label: 'Part A: Repeat', icon: <Mic2 className="w-5 h-5 text-blue-500" />, desc: 'Listen and repeat sentences.' },
     { id: 'B', label: 'Part B: Sentence Building', icon: <ListTodo className="w-5 h-5 text-indigo-500" />, desc: 'Rearrange words to form sentences.' },
+    { id: 'C', label: 'Part C: Conversations', icon: <MessageSquare className="w-5 h-5 text-teal-500" />, desc: 'Listen and answer a question.' },
     { id: 'D', label: 'Part D: Sentence Completion', icon: <Type className="w-5 h-5 text-pink-500" />, desc: 'Type the missing word.' },
     { id: 'E', label: 'Part E: Dictation', icon: <PenTool className="w-5 h-5 text-orange-500" />, desc: 'Type exactly what you hear.' },
     { id: 'F', label: 'Part F: Passage Reconstruction', icon: <BookOpen className="w-5 h-5 text-green-500" />, desc: 'Rewrite a passage from memory.' },
