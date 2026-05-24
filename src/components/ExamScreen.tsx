@@ -33,23 +33,41 @@ export function ExamScreen({ questions, onComplete }: ExamScreenProps) {
     setCurrentAnswer(saved);
   }, [currentIdx, questions, answers]);
 
+  const handleAnswerChange = (answer: string) => {
+    setCurrentAnswer(answer);
+    setAnswers(prev => ({
+      ...prev,
+      [questions[currentIdx].id]: { questionId: questions[currentIdx].id, answer }
+    }));
+  };
+
   const handleNext = () => {
     const q = questions[currentIdx];
     
-    // Save current answer
-    const newAnswers = { ...answers };
-    newAnswers[q.id] = { questionId: q.id, answer: currentAnswer };
-    setAnswers(newAnswers);
+    // Ensure the current answer is saved even if handleAnswerChange was not called 
+    // (e.g. they skipped without typing and we want to record an empty string for safety)
+    setAnswers(prev => ({
+      ...prev,
+      [q.id]: { questionId: q.id, answer: prev[q.id]?.answer ?? currentAnswer }
+    }));
 
     if (currentIdx < questions.length - 1) {
       const nextQ = questions[currentIdx + 1];
       if (q.section !== nextQ.section) {
         setShowSectionTransition(true);
       } else {
-        setCurrentIdx(currentIdx + 1);
+        setCurrentIdx(prev => prev + 1);
       }
     } else {
-      onComplete(newAnswers);
+      // Use functional state update to access the latest answers for onComplete
+      setAnswers(latestAnswers => {
+        const finalAnswers = {
+          ...latestAnswers,
+          [q.id]: { questionId: q.id, answer: latestAnswers[q.id]?.answer ?? currentAnswer }
+        };
+        onComplete(finalAnswers);
+        return finalAnswers;
+      });
     }
   };
 
@@ -61,9 +79,12 @@ export function ExamScreen({ questions, onComplete }: ExamScreenProps) {
   const handlePrevious = () => {
     // Save current answer before moving back
     const q = questions[currentIdx];
-    setAnswers({ ...answers, [q.id]: { questionId: q.id, answer: currentAnswer } });
+    setAnswers(prev => ({
+      ...prev,
+      [q.id]: { questionId: q.id, answer: prev[q.id]?.answer ?? currentAnswer }
+    }));
     
-    if (currentIdx > 0) setCurrentIdx(currentIdx - 1);
+    if (currentIdx > 0) setCurrentIdx(prev => prev - 1);
   };
 
   const handleSkipSection = () => {
@@ -147,7 +168,7 @@ export function ExamScreen({ questions, onComplete }: ExamScreenProps) {
              
              <QuestionRenderer 
                question={currentQuestion}
-               onAnswer={setCurrentAnswer}
+               onAnswer={handleAnswerChange}
                initialAnswer={currentAnswer}
                onAutoNext={handleNext}
                key={currentQuestion.id} // Ensure reset on load if reusing
