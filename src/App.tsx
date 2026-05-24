@@ -53,7 +53,10 @@ export default function App() {
         marksAwarded,
       };
 
-      if (q.section === 'D') {
+      if (q.section === 'C') {
+        const correctAnswers = Array.isArray(q.correctAnswer) ? q.correctAnswer : [q.correctAnswer];
+        detailedAnswer.evaluation = evaluateCompletion(correctAnswers, uAnswer);
+      } else if (q.section === 'D') {
         const correctAnswers = Array.isArray(q.correctAnswer) ? q.correctAnswer : [q.correctAnswer];
         detailedAnswer.evaluation = evaluateCompletion(correctAnswers, uAnswer);
       } else if (q.section === 'E') {

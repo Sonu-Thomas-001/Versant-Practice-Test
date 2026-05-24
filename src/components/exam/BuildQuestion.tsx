@@ -27,7 +27,7 @@ export function BuildQuestion({ question, onAnswer, initialAnswer = '', onAutoNe
     
     // Construct the text to be spoken
     const words = question.jumbledWords?.join(', ') || '';
-    setJumbledText(`Words: ${words}`);
+    setJumbledText(words);
     
     // Auto start playing after a short delay
     const playTimer = setTimeout(() => {
@@ -52,7 +52,7 @@ export function BuildQuestion({ question, onAnswer, initialAnswer = '', onAutoNe
       window.speechSynthesis.cancel();
       
       setTimeout(() => {
-        const utterance = new SpeechSynthesisUtterance(`Words: ${wordsToSpeak}`);
+        const utterance = new SpeechSynthesisUtterance(wordsToSpeak);
         (window as any)._currentUtterance = utterance;
         utterance.onstart = () => setPhase('playing');
         utterance.onend = () => {

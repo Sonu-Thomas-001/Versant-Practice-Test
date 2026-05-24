@@ -7,10 +7,11 @@ interface DetailedReviewProps {
 }
 
 export function DetailedReview({ detailedAnswers }: DetailedReviewProps) {
-  const partsToReview = detailedAnswers.filter(a => a.question.section === 'D' || a.question.section === 'E');
+  const partsToReview = detailedAnswers.filter(a => a.question.section === 'C' || a.question.section === 'D' || a.question.section === 'E');
 
   if (partsToReview.length === 0) return null;
 
+  const partC = partsToReview.filter(a => a.question.section === 'C');
   const partD = partsToReview.filter(a => a.question.section === 'D');
   const partE = partsToReview.filter(a => a.question.section === 'E');
 
@@ -18,12 +19,23 @@ export function DetailedReview({ detailedAnswers }: DetailedReviewProps) {
     <div className="w-full bg-white print:break-before-page page-break-before-always border-t-8 border-slate-900 flex flex-col">
       <div className="p-8 pb-4">
         <h2 className="text-2xl font-black text-gray-900 tracking-tight">Detailed Answer Review</h2>
-        <p className="text-gray-500 font-medium mt-1">Review of Sentence Completion and Dictation sections.</p>
+        <p className="text-gray-500 font-medium mt-1">Review of Conversations, Sentence Completion, and Dictation sections.</p>
       </div>
 
       <div className="p-8 pt-4 flex-1 space-y-8">
-        {partD.length > 0 && (
+        {partC.length > 0 && (
           <section>
+            <h3 className="text-xl font-bold border-b pb-2 mb-4">Part C: Conversations</h3>
+            <div className="space-y-6">
+              {partC.map((ans, idx) => (
+                <ReviewCard key={ans.question.id} answer={ans} index={idx} />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {partD.length > 0 && (
+          <section className="print:break-before-page page-break-before-always">
             <h3 className="text-xl font-bold border-b pb-2 mb-4">Part D: Sentence Completion</h3>
             <div className="space-y-6">
               {partD.map((ans, idx) => (

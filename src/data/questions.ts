@@ -279,9 +279,8 @@ export const questions: Question[] = [
     section: 'C' as const,
     sectionName: 'Part C: Conversations',
     instruction: 'Listen to the conversation and answer the question.',
-    prompt: item.prompt,
+    prompt: (item.prompt + ". " + item.question).replace(/\n/g, ". "),
     type: 'conversation' as const,
-    options: item.options,
     correctAnswer: item.correctAnswer,
     marks: 1,
     tip: 'Listen carefully for key details mentioned in the conversation.'
