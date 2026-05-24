@@ -33,14 +33,33 @@ export interface SectionResult {
   feedback: string;
 }
 
+export interface WordDiff {
+  value: string;
+  added?: boolean;
+  removed?: boolean;
+  ignored?: boolean;
+}
+
+export interface EvaluationDetail {
+  status: 'correct' | 'partial' | 'incorrect' | 'unanswered';
+  accurateExpected: string; // The specific correct answer matched against
+  accuracyPercent: number;
+  diffs?: WordDiff[];
+  missingWords?: string[];
+  extraWords?: string[];
+}
+
+export interface DetailedAnswer {
+  question: Question;
+  userAnswer: string;
+  marksAwarded: number;
+  evaluation?: EvaluationDetail;
+}
+
 export interface ExamResult {
   totalScore: number;
   maxScore: number;
   passed: boolean;
   sections: Record<SectionType, SectionResult>;
-  detailedAnswers: {
-    question: Question;
-    userAnswer: string;
-    marksAwarded: number;
-  }[];
+  detailedAnswers: DetailedAnswer[];
 }

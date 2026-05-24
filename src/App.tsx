@@ -5,7 +5,8 @@ import { ExamScreen } from './components/ExamScreen';
 import { ResultScreen } from './components/ResultScreen';
 import { questions } from './data/questions';
 import { evaluateAnswer, generateFeedback } from './lib/scoring';
-import { ExamState, ExamResult, UserAnswer, SectionType } from './types';
+import { compareSentences, evaluateCompletion } from './lib/comparison';
+import { ExamState, ExamResult, UserAnswer, SectionType, DetailedAnswer } from './types';
 
 export default function App() {
   const [examState, setExamState] = useState<'landing' | 'countdown' | 'exam' | 'result'>('landing');
@@ -34,7 +35,7 @@ export default function App() {
       F: { score: 0, maxScore: 0, feedback: '' },
     };
 
-    const detailedAnswers = activeQuestions.map((q) => {
+    const detailedAnswers: DetailedAnswer[] = activeQuestions.map((q) => {
       const uAnswer = userAnswers[q.id]?.answer || '';
       
       let marksAwarded = 0;
@@ -45,12 +46,23 @@ export default function App() {
       sections[q.section].score += marksAwarded;
       sections[q.section].maxScore += q.marks;
 
-      return {
+      const detailedAnswer: DetailedAnswer = {
         question: q,
         userAnswer: uAnswer,
         marksAwarded,
       };
+
+      if (q.section === 'D') {
+        const correctAnswers = Array.isArray(q.correctAnswer) ? q.correctAnswer : [q.correctAnswer];
+        detailedAnswer.evaluation = evaluateCompletion(correctAnswers, uAnswer);
+      } else if (q.section === 'E') {
+        const expected = Array.isArray(q.correctAnswer) ? q.correctAnswer[0] : q.correctAnswer;
+        detailedAnswer.evaluation = compareSentences(expected, uAnswer);
+      }
+
+      return detailedAnswer;
     });
+
 
     // Generate feedback for each section
     (Object.keys(sections) as SectionType[]).forEach(sec => {

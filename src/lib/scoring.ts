@@ -27,8 +27,7 @@ function normalizeString(str: string) {
   return str.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim().replace(/\s+/g, ' ');
 }
 
-// Calculate similarity ratio between 0 and 1
-function getStringSimilarity(str1: string, str2: string): number {
+export function getStringSimilarity(str1: string, str2: string): number {
   const s1 = normalizeString(str1);
   const s2 = normalizeString(str2);
   
@@ -39,6 +38,7 @@ function getStringSimilarity(str1: string, str2: string): number {
   const maxLength = Math.max(s1.length, s2.length);
   return 1 - distance / maxLength;
 }
+
 
 export function evaluateAnswer(question: Question, userAnswer: string): number {
   if (!userAnswer || userAnswer.trim() === '') return 0;

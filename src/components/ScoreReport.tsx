@@ -4,11 +4,13 @@ import { calculateDerivedScores, getSkillDescription } from '../utils/scoring';
 import { Button } from './ui/Button';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Cell } from 'recharts';
 import { Download, Printer, ChevronRight, Loader2 } from 'lucide-react';
+import { DetailedReview } from './DetailedReview';
 
 interface ScoreReportProps {
   result: ExamResult;
   onRestart: () => void;
 }
+
 
 interface LLMReport {
   overallSummary?: string;
@@ -273,10 +275,12 @@ export function ScoreReport({ result, onRestart }: ScoreReportProps) {
            {/* Footer Area Page 2 */}
            <div className="mt-auto p-6 bg-slate-50 border-t border-slate-200 text-xs text-slate-500 flex justify-between items-center">
              <p>Candidate ID: PRAC-9082-VT • Date: {currentDate}</p>
-             <p className="font-bold">Page 2 of 2</p>
+             <p className="font-bold">Page 2</p>
            </div>
 
         </div>
+
+        <DetailedReview detailedAnswers={result.detailedAnswers} />
 
       </div>
       
