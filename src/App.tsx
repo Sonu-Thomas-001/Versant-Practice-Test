@@ -11,7 +11,12 @@ export default function App() {
   const [examState, setExamState] = useState<'landing' | 'countdown' | 'exam' | 'result'>('landing');
   const [result, setResult] = useState<ExamResult | null>(null);
 
-  const handleStart = () => {
+  const [selectedSections, setSelectedSections] = useState<SectionType[]>(['A', 'B', 'C', 'D', 'E', 'F']);
+  const [activeQuestions, setActiveQuestions] = useState(questions);
+
+  const handleStart = (sections: SectionType[]) => {
+    setSelectedSections(sections);
+    setActiveQuestions(questions.filter(q => sections.includes(q.section)));
     setExamState('countdown');
   };
 
@@ -30,7 +35,7 @@ export default function App() {
       F: { score: 0, maxScore: 0, feedback: '' },
     };
 
-    const detailedAnswers = questions.map((q) => {
+    const detailedAnswers = activeQuestions.map((q) => {
       const uAnswer = userAnswers[q.id]?.answer || '';
       
       let marksAwarded = 0;
@@ -75,7 +80,7 @@ export default function App() {
     <div className="font-sans text-gray-900 bg-gray-50 min-h-screen">
       {examState === 'landing' && <LandingScreen onStart={handleStart} />}
       {examState === 'countdown' && <CountdownScreen onComplete={handleCountdownComplete} />}
-      {examState === 'exam' && <ExamScreen questions={questions} onComplete={handleComplete} />}
+      {examState === 'exam' && <ExamScreen questions={activeQuestions} onComplete={handleComplete} />}
       {examState === 'result' && result && <ResultScreen result={result} onRestart={handleRestart} />}
     </div>
   );

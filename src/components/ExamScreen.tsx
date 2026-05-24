@@ -166,16 +166,23 @@ export function ExamScreen({ questions, onComplete }: ExamScreenProps) {
 
         {/* Navigation */}
         <div className="flex justify-between pt-4 mt-8 bg-white border-t border-gray-100 py-4 px-2 flex-wrap gap-2">
-           <Button variant="outline" onClick={handlePrevious} disabled={currentIdx === 0} className="w-full sm:w-auto text-gray-500 hover:text-gray-700">
-             Previous
-           </Button>
-           <div className="flex gap-2 w-full sm:w-auto">
+           <div className="w-full sm:w-auto">
+             {currentQuestion.type !== 'repeat' && currentQuestion.type !== 'build' && currentQuestion.type !== 'conversation' && (
+               <Button variant="outline" onClick={handlePrevious} disabled={currentIdx === 0} className="w-full sm:w-auto text-gray-500 hover:text-gray-700">
+                 Previous
+               </Button>
+             )}
+           </div>
+           
+           <div className="flex gap-2 w-full sm:w-auto ml-auto">
              <Button variant="outline" onClick={handleSkipSection} className="w-full sm:w-auto text-orange-600 hover:text-orange-700 hover:bg-orange-50 border-orange-200">
                Skip Section
              </Button>
-             <Button onClick={handleNext} className="w-full sm:w-auto shadow-md">
-               {currentIdx === questions.length - 1 ? 'Finish Test' : 'Next'}
-             </Button>
+             {currentQuestion.type !== 'repeat' && currentQuestion.type !== 'build' && currentQuestion.type !== 'conversation' && (
+               <Button onClick={handleNext} className="w-full sm:w-auto shadow-md">
+                 {currentIdx === questions.length - 1 ? 'Finish Test' : 'Next'}
+               </Button>
+             )}
            </div>
         </div>
 
