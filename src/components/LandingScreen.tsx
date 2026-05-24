@@ -94,7 +94,24 @@ export function LandingScreen({ onStart }: LandingScreenProps) {
               </div>
             </div>
 
-            <Button onClick={() => setShowModal(true)} size="lg" className="w-full sm:w-auto px-8 py-7 text-xl font-bold rounded-2xl shadow-xl shadow-blue-500/20 hover:shadow-blue-500/30 transition-all hover:scale-[1.02]">
+            <Button 
+              onClick={() => {
+                const elem = document.documentElement as any;
+                try {
+                  if (elem.requestFullscreen) {
+                    elem.requestFullscreen().catch((err: any) => console.warn(err));
+                  } else if (elem.webkitRequestFullscreen) { /* Safari */
+                    elem.webkitRequestFullscreen();
+                  } else if (elem.msRequestFullscreen) { /* IE11 */
+                    elem.msRequestFullscreen();
+                  }
+                } catch (e) {
+                  console.warn("Fullscreen request failed", e);
+                }
+                setShowModal(true);
+              }} 
+              size="lg" 
+              className="w-full sm:w-auto px-8 py-7 text-xl font-bold rounded-2xl shadow-xl shadow-blue-500/20 hover:shadow-blue-500/30 transition-all hover:scale-[1.02]">
               <PlayCircle className="w-6 h-6 mr-3" />
               Configure & Start
             </Button>
