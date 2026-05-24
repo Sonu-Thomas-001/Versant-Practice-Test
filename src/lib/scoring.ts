@@ -1,8 +1,5 @@
 import { Question, ExamResult } from '../types';
 
-export const PASSING_SCORE = 49;
-export const MAX_SCORE = 80;
-
 // Simple Levenshtein distance for string comparison
 function getLevenshteinDistance(a: string, b: string): number {
   const matrix = Array.from({ length: a.length + 1 }, () => Array(b.length + 1).fill(0));
@@ -75,10 +72,6 @@ export function evaluateAnswer(question: Question, userAnswer: string): number {
       // Almost exact match required
       if (similarityScore > 0.9) return maxMarks;
       return 0;
-
-    case 'conversation':
-      // Exact match for multiple choice
-      return similarityScore === 1 ? maxMarks : 0;
 
     case 'reconstruction':
       // More lenient for long passage

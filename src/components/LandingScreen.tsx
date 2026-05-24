@@ -10,7 +10,7 @@ interface LandingScreenProps {
 
 export function LandingScreen({ onStart }: LandingScreenProps) {
   const [showModal, setShowModal] = useState(false);
-  const [selectedSections, setSelectedSections] = useState<SectionType[]>(['A', 'B', 'C', 'D', 'E', 'F']);
+  const [selectedSections, setSelectedSections] = useState<SectionType[]>(['A', 'B', 'D', 'E', 'F']);
 
   const allSections: { id: SectionType; label: string; icon: React.ReactNode; desc: string }[] = [
     { id: 'A', label: 'Part A: Repeat', icon: <Mic2 className="w-5 h-5 text-blue-500" />, desc: 'Listen and repeat sentences.' },

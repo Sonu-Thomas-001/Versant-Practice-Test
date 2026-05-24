@@ -1,4 +1,4 @@
-export type SectionType = 'A' | 'B' | 'C' | 'D' | 'E' | 'F';
+export type SectionType = 'A' | 'B' | 'D' | 'E' | 'F';
 
 export interface Question {
   id: string;
@@ -6,9 +6,8 @@ export interface Question {
   sectionName: string;
   instruction: string;
   prompt: string; // The audio transcript or reading text
-  type: 'repeat' | 'build' | 'conversation' | 'completion' | 'dictation' | 'reconstruction';
+  type: 'repeat' | 'build' | 'completion' | 'dictation' | 'reconstruction';
   correctAnswer: string | string[]; // Single string for exact, array for acceptable choices
-  options?: string[]; // Multiple choice options for conversation
   jumbledWords?: string[]; // For sentence building
   marks: number;
   timeLimit?: number;

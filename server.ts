@@ -51,13 +51,26 @@ Structure your response EXACTLY as this JSON format, keeping descriptions concis
 }
 DO NOT RETURN ANY MARKDOWN FORMATTING OR CODE BLOCKS. RETURN ONLY THE JSON OBJECT.`;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: prompt,
-      config: {
-        temperature: 0.2,
+    let response;
+    let retries = 3;
+    while (retries > 0) {
+      try {
+        response = await ai.models.generateContent({
+          model: "gemini-2.5-flash",
+          contents: prompt,
+          config: {
+            temperature: 0.2,
+          }
+        });
+        break; // Sucess, break the loop
+      } catch (error: any) {
+        retries--;
+        if (retries === 0 || !error?.message?.includes("503")) {
+          throw error;
+        }
+        await new Promise(resolve => setTimeout(resolve, 3000)); // wait 3 seconds before retrying
       }
-    });
+    }
 
     const text = response.text || "{}";
     let jsonResult;

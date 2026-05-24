@@ -4,14 +4,14 @@ import { CountdownScreen } from './components/CountdownScreen';
 import { ExamScreen } from './components/ExamScreen';
 import { ResultScreen } from './components/ResultScreen';
 import { questions } from './data/questions';
-import { evaluateAnswer, generateFeedback, PASSING_SCORE, MAX_SCORE } from './lib/scoring';
+import { evaluateAnswer, generateFeedback } from './lib/scoring';
 import { ExamState, ExamResult, UserAnswer, SectionType } from './types';
 
 export default function App() {
   const [examState, setExamState] = useState<'landing' | 'countdown' | 'exam' | 'result'>('landing');
   const [result, setResult] = useState<ExamResult | null>(null);
 
-  const [selectedSections, setSelectedSections] = useState<SectionType[]>(['A', 'B', 'C', 'D', 'E', 'F']);
+  const [selectedSections, setSelectedSections] = useState<SectionType[]>(['A', 'B', 'D', 'E', 'F']);
   const [activeQuestions, setActiveQuestions] = useState(questions);
 
   const handleStart = (sections: SectionType[]) => {
@@ -29,7 +29,6 @@ export default function App() {
     const sections: Record<SectionType, any> = {
       A: { score: 0, maxScore: 0, feedback: '' },
       B: { score: 0, maxScore: 0, feedback: '' },
-      C: { score: 0, maxScore: 0, feedback: '' },
       D: { score: 0, maxScore: 0, feedback: '' },
       E: { score: 0, maxScore: 0, feedback: '' },
       F: { score: 0, maxScore: 0, feedback: '' },
@@ -60,10 +59,17 @@ export default function App() {
       s.feedback = generateFeedback(p);
     });
 
+    let totalMaxScore = 0;
+    (Object.keys(sections) as SectionType[]).forEach(sec => {
+      totalMaxScore += sections[sec].maxScore;
+    });
+
+    const calculatedPassingScore = Math.floor(totalMaxScore * 0.6125); // ~61% of max like before
+
     setResult({
       totalScore: Math.round(totalScore),
-      maxScore: MAX_SCORE,
-      passed: totalScore >= PASSING_SCORE,
+      maxScore: totalMaxScore,
+      passed: totalScore >= calculatedPassingScore,
       sections,
       detailedAnswers
     });
