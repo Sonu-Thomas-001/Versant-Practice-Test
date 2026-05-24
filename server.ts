@@ -23,14 +23,18 @@ app.post("/api/generate-report", async (req, res) => {
     const prompt = `You are an expert ESOL examiner creating a language proficiency scorecard. 
 The test assesses Speaking, Listening, Reading, and Writing.
 
-Here are the candidate's computed scores (on a 10-90 scale):
-- Speaking: ${scores.speaking}
-- Listening: ${scores.listening}
-- Reading: ${scores.reading}
-- Writing: ${scores.writing}
+Here are the candidate's section scores (raw out of max):
+${Object.entries(sectionScores).map(([sec, data]: [string, any]) => `- Part ${sec}: ${data.score} out of ${data.maxScore}`).join('\n')}
+
+Here are the candidate's computed skill scores (on a 10-90 scale):
+- Speaking: ${scores.speaking || 'Not Assessed'}
+- Listening: ${scores.listening || 'Not Assessed'}
+- Reading: ${scores.reading || 'Not Assessed'}
+- Writing: ${scores.writing || 'Not Assessed'}
 - Overall: ${scores.overall}
 - CEFR Band: ${scores.cefr}
 
+Based on this performance data, please write the assessment.
 Structure your response EXACTLY as this JSON format, keeping descriptions concise, professional, exam-report style, and directly mentioning the CEFR levels appropriately:
 {
   "overallSummary": "A concise executive summary paragraph assessing their overall profile.",

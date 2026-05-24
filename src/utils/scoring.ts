@@ -15,34 +15,46 @@ export function calculateDerivedScores(sectionScores: Record<string, { score: nu
   // Normalize each section score to percentage (0 - 1)
   const norm = (s: string) => {
     const sec = sectionScores[s];
-    if (!sec || sec.maxScore === 0) return 0;
+    if (!sec || sec.maxScore === 0) return null;
     return sec.score / sec.maxScore;
   };
 
-  const getNorm = (s: string) => norm(s) || 0;
+  const calculateWeightedCategory = (weights: { [key: string]: number }) => {
+    let totalScore = 0;
+    let totalWeight = 0;
+    
+    for (const [section, weight] of Object.entries(weights)) {
+      const n = norm(section);
+      if (n !== null) {
+        totalScore += n * weight;
+        totalWeight += weight;
+      }
+    }
+    
+    if (totalWeight === 0) return null;
+    return totalScore / totalWeight;
+  };
 
   // High weight = 3, Medium = 2, Low = 1
   // Speaking: A (3), B (2), C (2)
-  const speakingRaw = (getNorm('A') * 3 + getNorm('B') * 2 + getNorm('C') * 2) / 7;
-  // Listening: A (2), C (3), E (2)
-  const listeningRaw = (getNorm('A') * 2 + getNorm('C') * 3 + getNorm('E') * 2) / 7;
-  // Reading: B (2), D (3), F (3)
-  const readingRaw = (getNorm('B') * 2 + getNorm('D') * 3 + getNorm('F') * 3) / 8;
-  // Writing: D (2), E (3), F (3)
-  const writingRaw = (getNorm('D') * 2 + getNorm('E') * 3 + getNorm('F') * 3) / 8;
+  const speakingRaw = calculateWeightedCategory({ A: 3, B: 2, C: 2 });
+  const listeningRaw = calculateWeightedCategory({ A: 2, C: 3, E: 2 });
+  const readingRaw = calculateWeightedCategory({ B: 2, D: 3, F: 3 });
+  const writingRaw = calculateWeightedCategory({ D: 2, E: 3, F: 3 });
 
   // Map raw percentage (0-1) to GSE scale (10-90)
-  const mapToGse = (raw: number) => {
-    // Basic linear map: 0->10, 1->90
+  const mapToGse = (raw: number | null) => {
+    if (raw === null) return null;
     return Math.round(10 + (raw * 80));
   };
 
-  const speaking = mapToGse(speakingRaw);
-  const listening = mapToGse(listeningRaw);
-  const reading = mapToGse(readingRaw);
-  const writing = mapToGse(writingRaw);
+  const speaking = mapToGse(speakingRaw) ?? 0;
+  const listening = mapToGse(listeningRaw) ?? 0;
+  const reading = mapToGse(readingRaw) ?? 0;
+  const writing = mapToGse(writingRaw) ?? 0;
 
-  const overallGse = Math.round((speaking + listening + reading + writing) / 4);
+  const validScores = [mapToGse(speakingRaw), mapToGse(listeningRaw), mapToGse(readingRaw), mapToGse(writingRaw)].filter(s => s !== null) as number[];
+  const overallGse = validScores.length > 0 ? Math.round(validScores.reduce((a, b) => a + b, 0) / validScores.length) : 10;
 
   return {
     overall: overallGse, // Versant often uses 20-80 scale, but GSE is 10-90. We'll stick to GSE (10-90)
