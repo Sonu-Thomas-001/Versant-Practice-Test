@@ -53,6 +53,7 @@ export function BuildQuestion({ question, onAnswer, initialAnswer = '', onAutoNe
       
       setTimeout(() => {
         const utterance = new SpeechSynthesisUtterance(`Words: ${wordsToSpeak}`);
+        (window as any)._currentUtterance = utterance;
         utterance.onstart = () => setPhase('playing');
         utterance.onend = () => {
           startRecording();

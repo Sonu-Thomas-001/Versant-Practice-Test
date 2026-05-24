@@ -25,7 +25,7 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({ question, on
     case 'completion':
       return <CompletionQuestion question={question} onAnswer={onAnswer} initialAnswer={initialAnswer} onAutoNext={onAutoNext} />;
     case 'dictation':
-      return <DictationQuestion question={question} onAnswer={onAnswer} initialAnswer={initialAnswer} />;
+      return <DictationQuestion question={question} onAnswer={onAnswer} initialAnswer={initialAnswer} onAutoNext={onAutoNext} />;
     case 'reconstruction':
       return <ReconstructionQuestion question={question} onAnswer={onAnswer} initialAnswer={initialAnswer} />;
     default:

@@ -48,6 +48,7 @@ export function RepeatQuestion({ question, onAnswer, initialAnswer = '', onAutoN
       
       setTimeout(() => {
         const utterance = new SpeechSynthesisUtterance(question.prompt);
+        (window as any)._currentUtterance = utterance;
         utterance.onstart = () => setPhase('playing');
         utterance.onend = () => {
           startRecording();

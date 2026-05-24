@@ -56,6 +56,7 @@ export function ConversationQuestion({ question, onAnswer, initialAnswer = '', o
       
       setTimeout(() => {
         const utterance = new SpeechSynthesisUtterance(cleanPrompt);
+        (window as any)._currentUtterance = utterance;
         utterance.onstart = () => setPhase('playing');
         utterance.onend = () => {
           startRecording();

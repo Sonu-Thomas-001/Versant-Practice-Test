@@ -110,7 +110,7 @@ export function CompletionQuestion({ question, onAnswer, initialAnswer = '', onA
                </div>
                
                <div>
-                 <Button type="submit" size="lg" className="px-10 py-6 text-xl rounded-2xl" disabled={phase === 'saving' || !value.trim()}>
+                 <Button onClick={handleSubmit} size="lg" className="px-10 py-6 text-xl rounded-2xl" disabled={phase === 'saving' || !value.trim()}>
                    Submit
                  </Button>
                </div>
