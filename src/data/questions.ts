@@ -1,4 +1,5 @@
 import { Question } from '../types';
+import { partDData } from './partDData';
 
 export const EXAM_DURATION = 30 * 60; // 30 minutes in seconds
 
@@ -271,6 +272,7 @@ const partAData = [
 // Fisher-Yates shuffle directly to randomly select 8 items
 const shuffledPartA = [...partAData].sort(() => 0.5 - Math.random()).slice(0, 16);
 const shuffledPartB = [...partBData].sort(() => 0.5 - Math.random()).slice(0, 8);
+const shuffledPartD = [...partDData].sort(() => 0.5 - Math.random()).slice(0, 18);
 const shuffledPartF = [...partFData].sort(() => 0.5 - Math.random()).slice(0, 2);
 
 export const questions: Question[] = [
@@ -321,24 +323,14 @@ export const questions: Question[] = [
     marks: 1,
     tip: 'Focus on the main idea of the conversation.'
   })),
-  ...Array.from({ length: 18 }).map((_, i) => ({
+  ...shuffledPartD.map((item, i) => ({
     id: `D${i + 1}`,
     section: 'D' as const,
     sectionName: 'Part D: Sentence Completion',
     instruction: 'Type one word to complete the sentence.',
-    prompt: [
-      'The sky is very _______ today, I do not see any clouds.',
-      'Please turn off the _______ before you leave the room.',
-      'He went to the _______ to buy some fresh bread.',
-      'I am so _______, I need to drink some water.'
-    ][i % 4],
+    prompt: item.p,
     type: 'completion' as const,
-    correctAnswer: [
-      ['clear', 'blue'],
-      ['lights', 'light'],
-      ['bakery', 'store', 'shop'],
-      ['thirsty', 'dry']
-    ][i % 4],
+    correctAnswer: item.a,
     marks: 1,
     tip: 'Ensure the word fits grammatically.'
   })),
