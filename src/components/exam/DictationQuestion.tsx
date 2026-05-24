@@ -17,7 +17,8 @@ export function DictationQuestion({ question, onAnswer, initialAnswer = '' }: Qu
     return () => {
       window.speechSynthesis.cancel();
     };
-  }, [initialAnswer]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [question.id]);
 
   const playAudio = () => {
     if ('speechSynthesis' in window) {

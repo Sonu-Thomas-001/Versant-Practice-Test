@@ -17,7 +17,8 @@ export function ReconstructionQuestion({ question, onAnswer, initialAnswer = '' 
     setValue(initialAnswer);
     setTimeLeft(question.timeLimit || 30);
     setCanType(false);
-  }, [question, initialAnswer]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [question.id]);
 
   useEffect(() => {
     if (timeLeft > 0 && !canType) {

@@ -19,7 +19,7 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({ question, on
     case 'repeat':
       return <RepeatQuestion question={question} onAnswer={onAnswer} initialAnswer={initialAnswer} onAutoNext={onAutoNext} />;
     case 'build':
-      return <BuildQuestion question={question} onAnswer={onAnswer} initialAnswer={initialAnswer} />;
+      return <BuildQuestion question={question} onAnswer={onAnswer} initialAnswer={initialAnswer} onAutoNext={onAutoNext} />;
     case 'conversation':
       return <ConversationQuestion question={question} onAnswer={onAnswer} initialAnswer={initialAnswer} />;
     case 'completion':

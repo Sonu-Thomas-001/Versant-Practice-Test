@@ -37,30 +37,34 @@ export function RepeatQuestion({ question, onAnswer, initialAnswer = '', onAutoN
         try { recognitionRef.current.stop(); } catch(e) {}
       }
     };
-  }, [question, initialAnswer]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [question.id]);
 
   const playAudio = () => {
     setPhase('playing');
     setManualFallback(false);
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(question.prompt);
-      utterance.onstart = () => setPhase('playing');
-      utterance.onend = () => {
-        startRecording();
-      };
-      utterance.onerror = (e) => {
-        console.error('Speech synthesis errored', e);
-        setManualFallback(true);
-      };
-      window.speechSynthesis.speak(utterance);
       
-      // Fallback in case onstart fails to trigger on mobile due to lack of standard interaction
       setTimeout(() => {
-        if (window.speechSynthesis.pending && !window.speechSynthesis.speaking) {
+        const utterance = new SpeechSynthesisUtterance(question.prompt);
+        utterance.onstart = () => setPhase('playing');
+        utterance.onend = () => {
+          startRecording();
+        };
+        utterance.onerror = (e) => {
+          console.error('Speech synthesis errored', e);
           setManualFallback(true);
-        }
-      }, 1000);
+        };
+        window.speechSynthesis.speak(utterance);
+        
+        // Fallback in case onstart fails to trigger on mobile due to lack of standard interaction
+        setTimeout(() => {
+          if (window.speechSynthesis.pending && !window.speechSynthesis.speaking) {
+            setManualFallback(true);
+          }
+        }, 1000);
+      }, 50);
     } else {
       setManualFallback(true);
     }
@@ -166,14 +170,13 @@ export function RepeatQuestion({ question, onAnswer, initialAnswer = '', onAutoN
         )}
       </div>
 
-      {/* Fallback typing area for dev mode in case microphone isn't available */}
-      <div className="space-y-4 opacity-40 focus-within:opacity-100 transition-opacity text-left">
+      <div className="space-y-4 transition-opacity text-left">
         <label className="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
-          Text Fallback (Mock)
+          Your Response
         </label>
         <textarea
           className="w-full min-h-[100px] p-4 border border-gray-300 rounded-xl shadow-inner focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-none font-medium text-lg bg-white"
-          placeholder="If microphone fails, type your response here..."
+          placeholder="Your transcribed response will appear here as you speak..."
           value={value}
           onChange={(e) => {
             setValue(e.target.value);

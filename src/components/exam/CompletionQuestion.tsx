@@ -12,7 +12,8 @@ export function CompletionQuestion({ question, onAnswer, initialAnswer = '' }: Q
   
   useEffect(() => {
     setValue(initialAnswer);
-  }, [initialAnswer]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [question.id]);
 
   return (
     <div className="space-y-6">
