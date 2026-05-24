@@ -18,6 +18,7 @@ export interface Question {
 export interface UserAnswer {
   questionId: string;
   answer: string;
+  confidence?: number;
 }
 
 export interface ExamState {

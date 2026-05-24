@@ -33,12 +33,19 @@ export function ExamScreen({ questions, onComplete }: ExamScreenProps) {
     setCurrentAnswer(saved);
   }, [currentIdx, questions, answers]);
 
-  const handleAnswerChange = (answer: string) => {
+  const handleAnswerChange = (answer: string, confidence?: number) => {
     setCurrentAnswer(answer);
-    setAnswers(prev => ({
-      ...prev,
-      [questions[currentIdx].id]: { questionId: questions[currentIdx].id, answer }
-    }));
+    setAnswers(prev => {
+      const existing = prev[questions[currentIdx].id] || {};
+      return {
+        ...prev,
+        [questions[currentIdx].id]: { 
+          questionId: questions[currentIdx].id, 
+          answer, 
+          confidence: confidence !== undefined ? confidence : existing.confidence 
+        }
+      };
+    });
   };
 
   const handleNext = () => {
@@ -46,10 +53,13 @@ export function ExamScreen({ questions, onComplete }: ExamScreenProps) {
     
     // Ensure the current answer is saved even if handleAnswerChange was not called 
     // (e.g. they skipped without typing and we want to record an empty string for safety)
-    setAnswers(prev => ({
-      ...prev,
-      [q.id]: { questionId: q.id, answer: prev[q.id]?.answer ?? currentAnswer }
-    }));
+    setAnswers(prev => {
+      const existing = prev[q.id] || {};
+      return {
+        ...prev,
+        [q.id]: { questionId: q.id, answer: prev[q.id]?.answer ?? currentAnswer, confidence: existing.confidence }
+      };
+    });
 
     if (currentIdx < questions.length - 1) {
       const nextQ = questions[currentIdx + 1];
@@ -61,9 +71,10 @@ export function ExamScreen({ questions, onComplete }: ExamScreenProps) {
     } else {
       // Use functional state update to access the latest answers for onComplete
       setAnswers(latestAnswers => {
+        const existing = latestAnswers[q.id] || {};
         const finalAnswers = {
           ...latestAnswers,
-          [q.id]: { questionId: q.id, answer: latestAnswers[q.id]?.answer ?? currentAnswer }
+          [q.id]: { questionId: q.id, answer: latestAnswers[q.id]?.answer ?? currentAnswer, confidence: existing.confidence }
         };
         onComplete(finalAnswers);
         return finalAnswers;
@@ -79,10 +90,13 @@ export function ExamScreen({ questions, onComplete }: ExamScreenProps) {
   const handlePrevious = () => {
     // Save current answer before moving back
     const q = questions[currentIdx];
-    setAnswers(prev => ({
-      ...prev,
-      [q.id]: { questionId: q.id, answer: prev[q.id]?.answer ?? currentAnswer }
-    }));
+    setAnswers(prev => {
+      const existing = prev[q.id] || {};
+      return {
+        ...prev,
+        [q.id]: { questionId: q.id, answer: prev[q.id]?.answer ?? currentAnswer, confidence: existing.confidence }
+      };
+    });
     
     if (currentIdx > 0) setCurrentIdx(prev => prev - 1);
   };

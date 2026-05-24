@@ -5,7 +5,7 @@ import { Volume2, Mic, CheckCircle, Loader2, Play } from 'lucide-react';
 
 interface QuestionProps {
   question: Question;
-  onAnswer: (answer: string) => void;
+  onAnswer: (answer: string, confidence?: number) => void;
   initialAnswer?: string;
   onAutoNext?: () => void;
 }
@@ -90,11 +90,20 @@ export function RepeatQuestion({ question, onAnswer, initialAnswer = '', onAutoN
     
     recognition.onresult = (event: any) => {
       let currentTranscript = '';
+      let totalConfidence = 0;
+      let count = 0;
+      
       for (let i = 0; i < event.results.length; i++) {
         currentTranscript += event.results[i][0].transcript;
+        if (event.results[i][0].confidence > 0) {
+          totalConfidence += event.results[i][0].confidence;
+          count++;
+        }
       }
       setValue(currentTranscript);
-      onAnswer(currentTranscript);
+      
+      const avgConfidence = count > 0 ? totalConfidence / count : undefined;
+      onAnswer(currentTranscript, avgConfidence);
     };
 
     recognition.onerror = (event: any) => {
@@ -181,7 +190,7 @@ export function RepeatQuestion({ question, onAnswer, initialAnswer = '', onAutoN
           value={value}
           onChange={(e) => {
             setValue(e.target.value);
-            onAnswer(e.target.value);
+            onAnswer(e.target.value, undefined);
           }}
           disabled={phase === 'saving'}
         />

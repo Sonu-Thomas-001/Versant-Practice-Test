@@ -40,7 +40,7 @@ export function getStringSimilarity(str1: string, str2: string): number {
 }
 
 
-export function evaluateAnswer(question: Question, userAnswer: string): number {
+export function evaluateAnswer(question: Question, userAnswer: string, confidence?: number): number {
   if (!userAnswer || userAnswer.trim() === '') return 0;
 
   const normalizedUser = normalizeString(userAnswer);
@@ -56,6 +56,13 @@ export function evaluateAnswer(question: Question, userAnswer: string): number {
     if (sim > similarityScore) {
       similarityScore = sim;
     }
+  }
+
+  // Adjust similarity based on pronunciation confidence if available for speaking tasks
+  if (question.type === 'repeat' && confidence !== undefined) {
+    // Confidence is a proxy for accent/tone clarity from speech recognition (0.0 to 1.0)
+    // We blend it with the string similarity.
+    similarityScore = (similarityScore * 0.7) + (confidence * 0.3);
   }
 
   // Scoring thresholds depending on question type

@@ -38,9 +38,10 @@ export default function App() {
 
     const detailedAnswers: DetailedAnswer[] = activeQuestions.map((q) => {
       const uAnswer = userAnswers[q.id]?.answer || '';
+      const confidence = userAnswers[q.id]?.confidence;
       
       let marksAwarded = 0;
-      marksAwarded = evaluateAnswer(q, uAnswer);
+      marksAwarded = evaluateAnswer(q, uAnswer, confidence);
       marksAwarded = Math.round(marksAwarded * 10) / 10; 
 
       totalScore += marksAwarded;

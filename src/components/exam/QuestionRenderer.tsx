@@ -9,7 +9,7 @@ import { ReconstructionQuestion } from './ReconstructionQuestion';
 
 interface QuestionRendererProps {
   question: Question;
-  onAnswer: (answer: string) => void;
+  onAnswer: (answer: string, confidence?: number) => void;
   initialAnswer?: string;
   onAutoNext?: () => void;
 }
