@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Question, UserAnswer } from '../types';
 import { EXAM_DURATION } from '../data/questions';
 import { Button } from './ui/Button';
@@ -18,8 +18,12 @@ export function ExamScreen({ questions, onComplete }: ExamScreenProps) {
   const [currentAnswer, setCurrentAnswer] = useState('');
   const [showSectionTransition, setShowSectionTransition] = useState(false);
   
+  const currentIdxRef = useRef(currentIdx);
+  currentIdxRef.current = currentIdx;
+
   useEffect(() => {
     if (timeLeft <= 0) {
+
       onComplete(answers);
       return;
     }
@@ -48,8 +52,16 @@ export function ExamScreen({ questions, onComplete }: ExamScreenProps) {
     });
   };
 
-  const handleNext = () => {
-    const q = questions[currentIdx];
+  const handleNext = (fromQuestionId?: string | React.MouseEvent) => {
+    const actualIdx = currentIdxRef.current;
+    if (actualIdx >= questions.length) return;
+    
+    const q = questions[actualIdx];
+
+    // Prevent rogue timeouts from older questions
+    if (typeof fromQuestionId === 'string' && fromQuestionId !== q.id) {
+      return;
+    }
     
     // Ensure the current answer is saved even if handleAnswerChange was not called 
     // (e.g. they skipped without typing and we want to record an empty string for safety)
@@ -61,12 +73,12 @@ export function ExamScreen({ questions, onComplete }: ExamScreenProps) {
       };
     });
 
-    if (currentIdx < questions.length - 1) {
-      const nextQ = questions[currentIdx + 1];
+    if (actualIdx < questions.length - 1) {
+      const nextQ = questions[actualIdx + 1];
       if (q.section !== nextQ.section) {
         setShowSectionTransition(true);
       } else {
-        setCurrentIdx(prev => prev + 1);
+        setCurrentIdx(actualIdx + 1);
       }
     } else {
       // Use functional state update to access the latest answers for onComplete
@@ -102,8 +114,10 @@ export function ExamScreen({ questions, onComplete }: ExamScreenProps) {
   };
 
   const handleSkipSection = () => {
-    const currentSection = questions[currentIdx].section;
-    const nextSectionIdx = questions.findIndex((q, i) => i > currentIdx && q.section !== currentSection);
+    const actualIdx = currentIdxRef.current;
+    if (actualIdx >= questions.length) return;
+    const currentSection = questions[actualIdx].section;
+    const nextSectionIdx = questions.findIndex((q, i) => i > actualIdx && q.section !== currentSection);
     
     if (nextSectionIdx !== -1) {
       setCurrentIdx(nextSectionIdx - 1);
@@ -116,6 +130,7 @@ export function ExamScreen({ questions, onComplete }: ExamScreenProps) {
   };
 
   const currentQuestion = questions[currentIdx];
+  if (!currentQuestion) return null;
   const currentSectionQuestions = questions.filter(q => q.section === currentQuestion.section);
   const progress = (currentIdx + 1) / questions.length;
   
@@ -184,7 +199,7 @@ export function ExamScreen({ questions, onComplete }: ExamScreenProps) {
                question={currentQuestion}
                onAnswer={handleAnswerChange}
                initialAnswer={currentAnswer}
-               onAutoNext={handleNext}
+               onAutoNext={() => handleNext(currentQuestion.id)}
                key={currentQuestion.id} // Ensure reset on load if reusing
              />
            </div>
