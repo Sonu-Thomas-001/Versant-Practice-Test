@@ -14,15 +14,19 @@ export function RepeatQuestion({ question, onAnswer, initialAnswer = '', onAutoN
   const [phase, setPhase] = useState<'idle' | 'playing' | 'recording' | 'saving'>('idle');
   const [value, setValue] = useState(initialAnswer);
   const [manualFallback, setManualFallback] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(15);
   
   const recognitionRef = useRef<any>(null);
   const timerRef = useRef<any>(null);
+  const phaseRef = useRef(phase);
+  phaseRef.current = phase;
 
   useEffect(() => {
     // Reset state for new question
     setValue(initialAnswer);
     setPhase('idle');
     setManualFallback(false);
+    setTimeLeft(15);
     
     // Auto start playing after a short delay
     const playTimer = setTimeout(() => {
@@ -31,7 +35,7 @@ export function RepeatQuestion({ question, onAnswer, initialAnswer = '', onAutoN
 
     return () => {
       clearTimeout(playTimer);
-      if (timerRef.current) clearTimeout(timerRef.current);
+      if (timerRef.current) clearInterval(timerRef.current);
       window.speechSynthesis.cancel();
       if (recognitionRef.current) {
         try { recognitionRef.current.stop(); } catch(e) {}
@@ -39,6 +43,30 @@ export function RepeatQuestion({ question, onAnswer, initialAnswer = '', onAutoN
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [question.id]);
+
+  // Timer tick effect for recording phase
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (phase === 'recording') {
+      timer = setInterval(() => {
+        setTimeLeft(prev => prev - 1);
+      }, 1000);
+    }
+    return () => {
+      if (timer) clearInterval(timer);
+    };
+  }, [phase, question.id]);
+
+  // Phase transition effect
+  useEffect(() => {
+    if (phase === 'recording' && timeLeft <= 0) {
+      if (recognitionRef.current) {
+        try { recognitionRef.current.stop(); } catch(e) {}
+      }
+      finishAndAdvance();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timeLeft, phase]);
 
   const playAudio = () => {
     setPhase('playing');
@@ -77,9 +105,6 @@ export function RepeatQuestion({ question, onAnswer, initialAnswer = '', onAutoN
     
     if (!SpeechRecognition) {
       // Fallback: Give user some time to type
-      timerRef.current = setTimeout(() => {
-        finishAndAdvance();
-      }, 6000);
       return;
     }
 
@@ -112,21 +137,29 @@ export function RepeatQuestion({ question, onAnswer, initialAnswer = '', onAutoN
       }
     };
     
+    // If it stops recording prematurely, restart it if we are still in recording phase
+    recognition.onend = () => {
+      if (phaseRef.current === 'recording') {
+        try {
+          recognition.start();
+        } catch (e) {
+          console.error('Restarting speech recognition error:', e);
+        }
+      }
+    };
+    
     try {
       recognition.start();
     } catch (e) {
       console.error('Speech recognition error:', e);
     }
-
-    // Stop recording automatically after fixed duration (e.g., 6 seconds)
-    timerRef.current = setTimeout(() => {
-      try { recognitionRef.current?.stop(); } catch(e) {}
-      finishAndAdvance();
-    }, 6000);
   };
 
   const finishAndAdvance = () => {
     setPhase('saving');
+    if (recognitionRef.current) {
+      try { recognitionRef.current.stop(); } catch(e) {}
+    }
     // Short transition before moving to next question
     setTimeout(() => {
       if (onAutoNext) {
@@ -135,9 +168,35 @@ export function RepeatQuestion({ question, onAnswer, initialAnswer = '', onAutoN
     }, 1500);
   };
 
+  const handleSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (phase === 'saving') return;
+    finishAndAdvance();
+  };
+
   return (
-    <div className="space-y-8 mt-4 text-center">
-      <div className="flex flex-col items-center justify-center space-y-6 py-12 px-4 bg-gray-50 border border-gray-200 rounded-xl relative overflow-hidden transition-colors">
+    <div className="space-y-6">
+      {/* Header section with Timer or Status */}
+      <div className="flex justify-between items-center bg-white p-4 rounded-xl border border-gray-200 shadow-sm relative overflow-hidden h-[72px]">
+        {phase === 'recording' ? (
+          <>
+            <div className="absolute top-0 left-0 bottom-0 bg-red-50 transition-all duration-1000 ease-linear" style={{ width: `${(timeLeft / 15) * 100}%` }} />
+            <div className="relative flex items-center text-red-600 font-bold text-lg">
+               <Clock className="w-6 h-6 mr-3" />
+               Time remaining: {timeLeft}s
+            </div>
+            <div className="relative text-sm text-gray-500 font-bold uppercase tracking-wider hidden sm:block">
+               Speak your answer now
+            </div>
+          </>
+        ) : (
+          <div className="flex items-center justify-center w-full text-blue-600 font-bold">
+            {phase === 'playing' ? 'Playing audio...' : phase === 'idle' ? 'Preparing...' : 'Submitting answer...'}
+          </div>
+        )}
+      </div>
+
+      <div className="flex flex-col items-center justify-center space-y-6 py-12 px-4 bg-gray-50 border border-gray-200 rounded-xl relative overflow-hidden transition-colors min-h-[300px]">
         {phase === 'idle' && (
           <div className="text-gray-500 flex flex-col items-center animate-pulse">
             <Loader2 className="w-12 h-12 mb-4 animate-spin" />
@@ -170,7 +229,7 @@ export function RepeatQuestion({ question, onAnswer, initialAnswer = '', onAutoN
         )}
 
         {phase === 'saving' && (
-          <div className="text-green-600 flex flex-col items-center">
+          <div className="text-green-600 flex flex-col items-center animate-in zoom-in duration-300">
             <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-4">
               <CheckCircle className="w-10 h-10" />
             </div>
@@ -180,20 +239,29 @@ export function RepeatQuestion({ question, onAnswer, initialAnswer = '', onAutoN
         )}
       </div>
 
-      <div className="space-y-4 transition-opacity text-left">
-        <label className="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
-          Your Response
-        </label>
-        <textarea
-          className="w-full min-h-[100px] p-4 border border-gray-300 rounded-xl shadow-inner focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-none font-medium text-lg bg-white"
-          placeholder="Your transcribed response will appear here as you speak..."
-          value={value}
-          onChange={(e) => {
-            setValue(e.target.value);
-            onAnswer(e.target.value, undefined);
-          }}
-          disabled={phase === 'saving'}
-        />
+      <div className="w-full max-w-2xl mx-auto px-4 animate-in fade-in zoom-in duration-300">
+        <form onSubmit={handleSubmit} className="text-left w-full space-y-4">
+          <label className="block text-sm font-semibold text-gray-700 uppercase tracking-wider pl-1 text-center">
+            Your Response
+          </label>
+          <textarea
+            className="w-full min-h-[120px] p-4 border border-gray-300 rounded-xl shadow-inner focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-none font-medium text-lg bg-white"
+            placeholder="Your transcribed response will appear here as you speak..."
+            value={value}
+            onChange={(e) => {
+              setValue(e.target.value);
+              onAnswer(e.target.value, undefined);
+            }}
+            disabled={phase === 'saving'}
+          />
+          {(phase === 'recording' || phase === 'idle' || phase === 'playing') && (
+            <div className="flex justify-center mt-4">
+              <Button onClick={handleSubmit} size="lg" className="px-10 py-4 text-lg rounded-2xl" disabled={phase !== 'recording' && !value.trim()}>
+                Submit
+              </Button>
+            </div>
+          )}
+        </form>
       </div>
     </div>
   );

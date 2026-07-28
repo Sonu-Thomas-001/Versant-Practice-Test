@@ -20,16 +20,21 @@ export function ExamScreen({ questions, onComplete }: ExamScreenProps) {
   
   const currentIdxRef = useRef(currentIdx);
   currentIdxRef.current = currentIdx;
+  
+  const answersRef = useRef(answers);
+  answersRef.current = answers;
+
+  useEffect(() => {
+    const timer = setInterval(() => setTimeLeft((prev) => prev - 1), 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     if (timeLeft <= 0) {
-
-      onComplete(answers);
-      return;
+      onComplete(answersRef.current);
     }
-    const timer = setInterval(() => setTimeLeft((prev) => prev - 1), 1000);
-    return () => clearInterval(timer);
-  }, [timeLeft, answers, onComplete]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timeLeft]);
 
   // Load existing answer when navigating back or forward
   useEffect(() => {
@@ -81,16 +86,14 @@ export function ExamScreen({ questions, onComplete }: ExamScreenProps) {
         setCurrentIdx(actualIdx + 1);
       }
     } else {
-      // Use functional state update to access the latest answers for onComplete
-      setAnswers(latestAnswers => {
-        const existing = latestAnswers[q.id] || {};
-        const finalAnswers = {
-          ...latestAnswers,
-          [q.id]: { questionId: q.id, answer: latestAnswers[q.id]?.answer ?? currentAnswer, confidence: existing.confidence }
-        };
-        onComplete(finalAnswers);
-        return finalAnswers;
-      });
+      const latestAnswers = answersRef.current;
+      const existing = latestAnswers[q.id] || {};
+      const finalAnswers = {
+        ...latestAnswers,
+        [q.id]: { questionId: q.id, answer: latestAnswers[q.id]?.answer ?? currentAnswer, confidence: existing.confidence }
+      };
+      setAnswers(finalAnswers);
+      setTimeout(() => onComplete(finalAnswers), 0);
     }
   };
 

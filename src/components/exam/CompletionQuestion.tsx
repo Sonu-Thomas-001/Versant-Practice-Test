@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Question } from '../../types';
 import { Button } from '../ui/Button';
 import { Clock, CheckCircle } from 'lucide-react';
@@ -14,40 +14,38 @@ export function CompletionQuestion({ question, onAnswer, initialAnswer = '', onA
   const [value, setValue] = useState(initialAnswer);
   const [timeLeft, setTimeLeft] = useState(25);
   const [phase, setPhase] = useState<'answering' | 'saving'>('answering');
-  const timerRef = useRef<any>(null);
 
   useEffect(() => {
     setValue(initialAnswer);
     setTimeLeft(25);
     setPhase('answering');
-    
-    // Start countdown
-    timerRef.current = setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev <= 1) {
-          clearInterval(timerRef.current);
-          handleTimeUp();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [question.id]);
 
-  const handleTimeUp = () => {
-    // Save whatever is there and move on
-    finishAndAdvance();
-  };
+  // Timer tick effect
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (phase === 'answering') {
+      timer = setInterval(() => {
+        setTimeLeft(prev => prev - 1);
+      }, 1000);
+    }
+    return () => {
+      if (timer) clearInterval(timer);
+    };
+  }, [phase, question.id]);
+
+  // Phase transition effect
+  useEffect(() => {
+    if (phase === 'answering' && timeLeft <= 0) {
+      finishAndAdvance();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timeLeft, phase]);
 
   const handleSubmit = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (phase === 'saving') return;
-    if (timerRef.current) clearInterval(timerRef.current);
     finishAndAdvance();
   };
 

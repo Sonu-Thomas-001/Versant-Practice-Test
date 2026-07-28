@@ -15,8 +15,6 @@ export function DictationQuestion({ question, onAnswer, initialAnswer = '', onAu
   const [phase, setPhase] = useState<'playing' | 'answering' | 'saving'>('playing');
   const [timeLeft, setTimeLeft] = useState(30);
   
-  const timerRef = useRef<any>(null);
-  
   useEffect(() => {
     setValue(initialAnswer);
     setPhase('playing');
@@ -29,24 +27,34 @@ export function DictationQuestion({ question, onAnswer, initialAnswer = '', onAu
 
     return () => {
       clearTimeout(playTimeout);
-      if (timerRef.current) clearInterval(timerRef.current);
       window.speechSynthesis.cancel();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [question.id]);
 
+  // Timer tick effect
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (phase === 'answering') {
+      timer = setInterval(() => {
+        setTimeLeft(prev => prev - 1);
+      }, 1000);
+    }
+    return () => {
+      if (timer) clearInterval(timer);
+    };
+  }, [phase, question.id]);
+
+  // Phase transition effect
+  useEffect(() => {
+    if (phase === 'answering' && timeLeft <= 0) {
+      finishAndAdvance();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timeLeft, phase]);
+
   const startTimer = () => {
     setPhase('answering');
-    timerRef.current = setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev <= 1) {
-          clearInterval(timerRef.current);
-          handleTimeUp();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
   };
 
   const playAudio = () => {
@@ -65,14 +73,9 @@ export function DictationQuestion({ question, onAnswer, initialAnswer = '', onAu
     }
   };
 
-  const handleTimeUp = () => {
-    finishAndAdvance();
-  };
-
   const handleSubmit = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (phase === 'saving') return;
-    if (timerRef.current) clearInterval(timerRef.current);
     finishAndAdvance();
   };
 

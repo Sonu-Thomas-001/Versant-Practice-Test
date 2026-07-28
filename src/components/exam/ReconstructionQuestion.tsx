@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Question } from '../../types';
 import { Clock, CheckCircle } from 'lucide-react';
 import { Button } from '../ui/Button';
@@ -15,56 +15,43 @@ export function ReconstructionQuestion({ question, onAnswer, initialAnswer = '',
   const [phase, setPhase] = useState<'reading' | 'writing' | 'saving'>('reading');
   const [timeLeft, setTimeLeft] = useState(question.timeLimit || 30);
   
-  const timerRef = useRef<any>(null);
-
   useEffect(() => {
     // Reset state when question changes
     setValue(initialAnswer);
     setPhase('reading');
     setTimeLeft(question.timeLimit || 30);
-    
-    // Start reading timer
-    timerRef.current = setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev <= 1) {
-          clearInterval(timerRef.current);
-          startWritingPhase();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [question.id]);
 
-  const startWritingPhase = () => {
-    setPhase('writing');
-    setTimeLeft(90);
-    
-    timerRef.current = setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev <= 1) {
-          clearInterval(timerRef.current);
-          handleTimeUp();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-  };
+  // Timer tick effect
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (phase === 'reading' || phase === 'writing') {
+      timer = setInterval(() => {
+        setTimeLeft(prev => prev - 1);
+      }, 1000);
+    }
+    return () => {
+      if (timer) clearInterval(timer);
+    };
+  }, [phase, question.id]);
 
-  const handleTimeUp = () => {
-    finishAndAdvance();
-  };
+  // Phase transition effect
+  useEffect(() => {
+    if (timeLeft <= 0) {
+      if (phase === 'reading') {
+        setPhase('writing');
+        setTimeLeft(90);
+      } else if (phase === 'writing') {
+        finishAndAdvance();
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timeLeft, phase]);
 
   const handleSubmit = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (phase === 'saving') return;
-    if (timerRef.current) clearInterval(timerRef.current);
     finishAndAdvance();
   };
 
